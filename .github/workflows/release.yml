@@ -1,36 +1,68 @@
-name: Release packages
+am4core.ready(function() {
 
-on:
-  push:
-    branches:
-      - next
+    // Create chart instance
+    var chart = am4core.create("chartdiv", am4charts.XYChart);
 
-jobs:
-  release:
-    name: Publish
-    runs-on: ubuntu-20.04
-    if: "startsWith(github.event.head_commit.message, 'chore: release')"
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    // Add data
+    chart.data = [{
+        "date": "2022-03-01",
+        "importVolumeDist": 20000,
+        "exportVolumeDist": 30000,
+        "importRateUSD": 50,
+        "localRateRS": 700,
+        "weeklyHigh": 800
+    }, {
+        "date": "2022-03-02",
+        "importVolumeDist": 22000,
+        "exportVolumeDist": 35000,
+        "importRateUSD": 52,
+        "localRateRS": 710,
+        "weeklyHigh": 820
+    }, {
+        "date": "2022-03-03",
+        "importVolumeDist": 24000,
+        "exportVolumeDist": 40000,
+        "importRateUSD": 55,
+        "localRateRS": 720,
+        "weeklyHigh": 850
+    }, {
+        "date": "2022-03-04",
+        "importVolumeDist": 28000,
+        "exportVolumeDist": 45000,
+        "importRateUSD": 58,
+        "localRateRS": 730,
+        "weeklyHigh": 880
+    }, {
+        "date": "2022-03-05",
+        "importVolumeDist": 32000,
+        "exportVolumeDist": 50000,
+        "importRateUSD": 60,
+        "localRateRS": 750,
+        "weeklyHigh": 900
+    }, {
+        "date": "2022-03-06",
+        "importVolumeDist": 34000,
+        "exportVolumeDist": 55000,
+        "importRateUSD": 62,
+        "localRateRS": 770,
+        "weeklyHigh": 920
+    }, {
+        "date": "2022-03-07",
+        "importVolumeDist": 36000,
+        "exportVolumeDist": 60000,
+        "importRateUSD": 65,
+        "localRateRS": 780,
+        "weeklyHigh": 950
+    }];
 
-      - name: Install Node
-        uses: actions/setup-node@v3
-        with:
-          node-version-file: .nvmrc
-          cache: yarn
+    // Set up X-axis
+    var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.grid.template.location = 0;
 
-      - name: Install JavaScript dependencies
-        shell: bash
-        run: yarn install
+    // Set up Y-axis
+    var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-      - name: Build clients
-        shell: bash
-        run: yarn build:all
-
-      - name: Publish to NPM
-        shell: bash
-        run: yarn release:publish
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+    // Set up series
+    var importVolumeDistSeries = chart.series.push(new am4charts.LineSeries());
+    importVolumeDistSeries.dataFields.valueY = "importVolumeDist";
+   
